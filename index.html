@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>نموذج الطلب</title>
+
+  <!-- Google Font for Arabic -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Font Awesome Icons -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+  />
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Cairo', sans-serif;
+      background-color: #f2f2f5;
+      padding: 40px 20px;
+      color: #333;
+    }
+
+    .form-container {
+      max-width: 420px;
+      margin: auto;
+      background: #ffffff;
+      padding: 30px 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    h2 {
+      text-align: center;
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 25px;
+    }
+
+    .input-group {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .input-group i {
+      position: absolute;
+      top: 50%;
+      right: 16px;
+      transform: translateY(-50%);
+      font-size: 18px;
+      color: #999;
+    }
+
+    .input-group input,
+    .input-group select {
+      width: 100%;
+      padding: 12px 40px 12px 14px;
+      font-size: 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      background: #fafafa;
+    }
+
+    .input-group input:focus,
+    .input-group select:focus {
+      outline: none;
+      border-color: #555;
+      box-shadow: 0 0 5px rgba(85, 85, 85, 0.2);
+      background: #fff;
+    }
+
+    ::placeholder {
+      color: #aaa;
+    }
+
+    button {
+      width: 100%;
+      padding: 13px 0;
+      background-color: #333;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.1s;
+    }
+
+    button:hover {
+      background-color: #555;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="form-container">
+    <h2>نموذج الطلب</h2>
+    <form id="orderForm">
+      <input type="hidden" id="variantId" name="variantId" />
+
+      <div class="input-group">
+        <i class="fas fa-user"></i>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          placeholder="الاسم الكامل"
+          required
+        />
+      </div>
+
+      <div class="input-group">
+        <i class="fas fa-phone"></i>
+        <input
+          type="tel"
+          id="phone"
+          name="phone"
+          placeholder="رقم الهاتف"
+          required
+        />
+      </div>
+
+      <div class="input-group">
+        <i class="fas fa-map-marker-alt"></i>
+        <select id="province" name="province" required>
+          <option value="" disabled selected>اختَر الولاية</option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <i class="fas fa-location-dot"></i>
+        <input
+          type="text"
+          id="address"
+          name="address"
+          placeholder="العنوان بالتفصيل"
+          required
+        />
+      </div>
+
+      <button type="submit">أطلب الآن</button>
+    </form>
+  </div>
+
+  <script>
+    const provinces = [
+      "أدرار","الشلف","الأغواط","أم البواقي","باتنة","بجاية","بسكرة","بشار",
+      "البليدة","البويرة","تمنراست","تبسة","تلمسان","تيارت","تيزي وزو","الجزائر",
+      "الجلفة","جيجل","سطيف","سعيدة","سكيكدة","سيدي بلعباس","عنابة","قالمة",
+      "قسنطينة","المدية","مستغانم","المسيلة","معسكر","ورقلة","وهران","البيض",
+      "إليزي","برج بوعريريج","بومرداس","الطارف","تندوف","تيسمسيلت","الوادي",
+      "خنشلة","سوق أهراس","تيبازة","ميلة","عين الدفلى","النعامة","عين تموشنت",
+      "غرداية","غليزان","تميمون","برج باجي مختار","أولاد جلال","بني عباس",
+      "عين صالح","عين قزام","تقرت","جانت","المغير","المنيعة"
+    ];
+    const select = document.getElementById('province');
+    provinces.forEach(p => {
+      const opt = document.createElement('option');
+      opt.value = p;
+      opt.textContent = p;
+      select.appendChild(opt);
+    });
+
+    // Get variantId from URL
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    const variantIdFromURL = getQueryParam("variantId");
+    if (variantIdFromURL) {
+      document.getElementById("variantId").value = `gid://shopify/ProductVariant/${variantIdFromURL}`;
+    }
+
+    document.getElementById("orderForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value;
+      const phone = document.getElementById("phone").value;
+      const province = document.getElementById("province").value;
+      const address = document.getElementById("address").value;
+      const variantId = document.getElementById("variantId").value;
+
+      const response = await fetch("/.netlify/functions/create-checkout", {
+        method: "POST",
+        body: JSON.stringify({ name, phone, province, address, variantId }),
+      });
+
+      const data = await response.json();
+
+      if (data.checkoutUrl) {
+        window.location.href = data.checkoutUrl;
+      } else {
+        alert("حدث خطأ، حاول مجددًا.");
+      }
+    });
+  </script>
+</body>
+</html>
